@@ -1,0 +1,57 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: serverless-forms
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  role: arn:aws:iam::624672360688:role/lambda-executions
+  region: ${opt:region, 'us-east-1'}
+  apiKeys:
+    - privatePathKey
+
+  environment:
+    REGION: ${opt:region, 'us-east-1'}
+    AWS_KEY: ${ssm:/JamTools/${opt:stage, 'dev'}/AWS_KEY}
+    AWS_SECRET: ${ssm:/JamTools/${opt:stage, 'dev'}/AWS_SECRET}
+    NOTIFICATIONS_QUEUE_URL: ${ssm:/JamTools/${opt:stage, 'dev'}/NOTIFICATION_QUEUE}
+    MAILGUN_API_KEY: ${ssm:/JamTools/${opt:stage, 'dev'}/MAILGUN_API_KEY}
+    MAILGUN_DOMAIN: ${ssm:/JamTools/${opt:stage, 'dev'}/MAILGUN_DOMAIN}
+    EMAIL_FROM: ${ssm:/JamTools/${opt:stage, 'dev'}/EMAIL_FROM}
+    JWT_ENCRYPTION_KEY: ${ssm:/JamTools/${opt:stage, 'dev'}/JWT_ENCRYPTION_KEY}
+    DYNAMO_TABLE_PREFIX: JAMTools-${opt:stage, 'dev'}
+
+functions:
+
+  addContact:
+    handler: handler.addEntry
+    events:
+      - http:
+          path: contact/add
+          method: post
+          cors: true
+
+
+  addForm:
+    handler: handler.addForm
+    events:
+      - http:
+          path: form/add
+          method: post
+          cors: true
+          private: true
+
+  getFormToken:
+    handler: handler.getFormToken
+    events:
+      - http:
+          path: form/token/{id}
+          method: get
+          cors: true
+
+  handleContact:
+    handler: handler.contactNotification
+    reservedConcurrency: 1
