@@ -11,7 +11,7 @@ provider:
   role: arn:aws:iam::624672360688:role/lambda-executions
   region: ${opt:region, 'us-east-1'}
   apiKeys:
-    - privatePathKey
+    - ${opt:stage, 'dev'}PrivatePathKey
 
   environment:
     REGION: ${opt:region, 'us-east-1'}
@@ -33,7 +33,6 @@ functions:
           path: contact/add
           method: post
           cors: true
-
 
   addForm:
     handler: handler.addForm

@@ -2,15 +2,16 @@
 
 const ContactsController = require('./controllers/ContactsController');
 const FormsController = require('./controllers/FormsController');
-const MailController = require('./controllers/MailController');
 const SQSController = require('./controllers/SQSController');
-const Contact = require('./db/Contact');
-const Form = require('./db/Form');
 const SQS = new SQSController(process.env.NOTIFICATIONS_QUEUE_URL);
 
 const APIResponse = (body) => {
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
     body: JSON.stringify(body,null,2)
   };
 }
@@ -18,6 +19,10 @@ const APIResponse = (body) => {
 const APIError = (code, error) => {
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
     body: JSON.stringify({error},null,2)
   };
 }
@@ -83,8 +88,10 @@ const getForm = async (event) => {
 
 const addEntry = async (event) => {
   try {
+    const _body = JSON.parse(event.body);
+
     // Check for token
-    if(!!!event.headers['Polymath-Form-Token']) {
+    if(!!!_body['Polymath-Form-Token']) {
       throw new Error("Missing Token in Header");
     }
 
@@ -94,15 +101,16 @@ const addEntry = async (event) => {
       _ip = event.requestContext.identity.sourceIp;
     }
 
-    const Contact = new ContactsController({formToken: event.headers['Polymath-Form-Token']});
-    const _body = JSON.parse(event.body);
-    const _result = await Contact.add(_body, _ip);
+    const Contact = new ContactsController({formToken: _body['Polymath-Form-Token']});
+    const _contact = await Contact.add(_body, _ip);
 
-    await SQS.add(_result);
+    if(!!_contact._result) {
+      await SQS.add(_contact._result);
+    }
 
-    return APIResponse({
-      result: _result
-    });
+    return APIResponse(
+      _contact
+    );
 
   } catch(e) {
     console.error(e);

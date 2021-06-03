@@ -5,6 +5,7 @@ const DB = new Dynamo();
 const Token = new TokenController();
 
 const FormsController = require('./FormsController');
+const Util = require('./Util');
 
 class ContactsController {
 
@@ -15,6 +16,7 @@ class ContactsController {
     add(body, ip = null) {
         return new Promise(async (resolve, reject) => {
             try {
+                delete body['Polymath-Form-Token'];
                 const tokenPayload = await Token.validate(this.formToken);
                 this.formId = tokenPayload.form_id;
                 
@@ -36,18 +38,26 @@ class ContactsController {
                 if(!!!_form.primary_key || !!!body[_form.primary_key]) {
                     throw new Error("Form does not include a primary field. Please review your markup.");
                 }
+
+                // Check to see if email is valid.
+                if(_form.primary_key == "email" || _form.primary_key.index_of('email') > -1) {
+                    var _email = body[_form.primary_key];
+                    if(!Util.validateEmail(_email)) {
+                        throw new Error("Invalid email.");
+                    }
+                }
                 _payload.primary_field = body[_form.primary_key];
 
-                // Check to make sure they didn't fill out a honeypot.
+                const _contact = new DB.Contact(_payload);
+
+                // Check to make sure they didn't fill out a honeypot. if they did, swallow the exception
                 if(_form.honeypot_key !== "none" && !!body[_form.honeypot_key]) {
-                    throw new Error("Uh oh. Something went wrong.");
+                    return resolve({success: true});
+                } else {
+                    const _result = await _contact.save();
+                    return resolve({success: true, _result});
                 }
 
-                console.log(_payload);
-
-                const _contact = new DB.Contact(_payload);
-                const _result = _contact.save();
-                return resolve(_result);
             } catch (e) {
                 return reject(e);
             }
