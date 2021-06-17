@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "4c75dcff-a8d8-448a-98bf-bc509d6eb9fa",
+		"name": "FormApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Form",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "x-api-key",
+						"value": "yourkey",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"FormName\",\n    \"primary_key\": \"email\",\n    \"notification_email\": \"you@email.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourapi.com/dev/form/add",
+					"protocol": "https",
+					"host": [
+						"yourapi",
+						"com"
+					],
+					"path": [
+						"dev",
+						"form",
+						"add"
+					],
+					"query": [
+						{
+							"key": "test",
+							"value": "value",
+							"disabled": true
+						},
+						{
+							"key": "another",
+							"value": "test",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Form",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourapi.com/dev/form/token/3ddba4ce-d40f-41d4-8a1f-850604d95a37",
+					"protocol": "https",
+					"host": [
+						"yourapi",
+						"com"
+					],
+					"path": [
+						"dev",
+						"form",
+						"token",
+						"3ddba4ce-d40f-41d4-8a1f-850604d95a37"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Contact",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Polymath-Form-Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb3JtX2lkIjoiM2RkYmE0Y2UtZDQwZi00MWQ0LThhMWYtODUwNjA0ZDk1YTM3IiwiaWF0IjoxNjIwNjcyNDA2LCJleHAiOjE2MjA2NzYwMDZ9.w6sguqW7VV1K1xu7WAZYT8SBbaiTPS3k8iDAMnqSc4I",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"yike\": \"Big yike 79\",\n    \"email\": \"bigyifke123@email.com\",\n    \"bigboi\": \"Yeah, I'm a bigboi\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://yourapi.com/dev/contact/add",
+					"protocol": "https",
+					"host": [
+						"yourapi",
+						"com"
+					],
+					"path": [
+						"dev",
+						"contact",
+						"add"
+					],
+					"query": [
+						{
+							"key": "FormKey",
+							"value": "8997ac75-e93a-4e14-8940-a4b3e74215cd",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
